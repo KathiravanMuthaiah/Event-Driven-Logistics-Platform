@@ -1,0 +1,55 @@
+event-driven-logistics/
+├── docker-compose.yml
+├── README.md
+├── infrastructure/
+│   ├── kafka/
+│   │   └── docker-compose.kafka.yml
+│   ├── postgres/
+│   │   └── docker-compose.postgres.yml
+│   └── mqtt/
+│       └── docker-compose.mqtt.yml
+├── producer-http/
+│   ├── src/main/java/com/example/producerhttp/
+│   │   ├── ProducerHttpApplication.java
+│   │   ├── controller/CallOffController.java
+│   │   └── model/CallOffEvent.java
+│   └── resources/application.properties
+├── mqtt-ingestor/
+│   ├── src/main/java/com/example/mqttingestor/
+│   │   ├── MqttIngestorApplication.java
+│   │   └── service/MqttListener.java
+│   └── resources/application.properties
+├── streams-processor/
+│   ├── src/main/java/com/example/streamsprocessor/
+│   │   ├── StreamsProcessorApplication.java
+│   │   └── processor/CallOffSensorJoiner.java
+│   └── resources/application.properties
+├── postgres-writer/
+│   ├── src/main/java/com/example/postgreswriter/
+│   │   ├── PostgresWriterApplication.java
+│   │   └── service/EventConsumer.java
+│   └── resources/application.properties
+├── mock-sap-service/
+│   ├── src/main/java/com/example/mocksap/
+│   │   ├── MockSapApplication.java
+│   │   └── controller/MockSapController.java
+│   └── resources/application.properties
+├── mock-supply-service/
+│   ├── src/main/java/com/example/mocksupply/
+│   │   ├── MockSupplyApplication.java
+│   │   └── controller/MockSupplyController.java
+│   └── resources/application.properties
+├── mock-supplier-edi/
+│   ├── src/main/java/com/example/mocksupplieredi/
+│   │   ├── MockSupplierEdiApplication.java
+│   │   └── controller/MockSupplierEdiController.java
+│   └── resources/application.properties
+├── monitoring-api/
+│   ├── src/main/java/com/example/monitoring/
+│   │   ├── MonitoringApiApplication.java
+│   │   └── controller/EventsController.java
+│   └── resources/application.properties
+└── scripts/
+    ├── init-postgres.sql
+    └── create-topics.sh
+
