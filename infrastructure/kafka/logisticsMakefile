@@ -1,0 +1,56 @@
+# logisticsMakefile
+# Kafka Topics Management
+
+# The container name of your Kafka broker
+KAFKA_CONTAINER=kafka-logistics
+
+# The bootstrap server address (inside the Docker network)
+BOOTSTRAP_SERVER=localhost:9092
+
+# Default topic configs
+REPLICATION_FACTOR=1
+PARTITIONS=3
+
+# List of topics to manage
+TOPICS=call-off-topic sensor-topic unified-topic sap-topic supply-control-topic supplier-edi-topic
+
+# Create all topics
+create-topics:
+	@echo "Creating topics..."
+	@for topic in $(TOPICS); do \
+		docker exec -i $(KAFKA_CONTAINER) kafka-topics.sh \
+			--create \
+			--if-not-exists \
+			--bootstrap-server $(BOOTSTRAP_SERVER) \
+			--replication-factor $(REPLICATION_FACTOR) \
+			--partitions $(PARTITIONS) \
+			--topic $$topic ; \
+	done
+	@echo "All topics created."
+
+# List all topics
+list-topics:
+	@docker exec -i $(KAFKA_CONTAINER) kafka-topics.sh \
+		--list \
+		--bootstrap-server $(BOOTSTRAP_SERVER)
+
+# Describe all topics
+describe-topics:
+	@for topic in $(TOPICS); do \
+		docker exec -i $(KAFKA_CONTAINER) kafka-topics.sh \
+			--describe \
+			--bootstrap-server $(BOOTSTRAP_SERVER) \
+			--topic $$topic ; \
+	done
+
+# Delete all topics (careful!)
+delete-topics:
+	@echo "Deleting topics..."
+	@for topic in $(TOPICS); do \
+		docker exec -i $(KAFKA_CONTAINER) kafka-topics.sh \
+			--delete \
+			--bootstrap-server $(BOOTSTRAP_SERVER) \
+			--topic $$topic ; \
+	done
+	@echo "All topics deleted."
+

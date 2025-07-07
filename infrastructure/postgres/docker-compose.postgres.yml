@@ -1,0 +1,31 @@
+    
+services:
+  logistic_db:
+    image: postgres:15
+    container_name: logistic_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./docker-volume/postgres/data:/var/lib/postgresql/data
+      - ./docker-volume/root/.cache:/root/.cache
+      - ./init:/docker-entrypoint-initdb.d
+    ports:
+      - "${POSTGRES_HOST_PORT}:5432"
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+    networks:
+      - bankingnet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  bankingnet:
+    external: true

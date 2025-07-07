@@ -166,6 +166,42 @@ This tech stack was chosen because it:
 - Enables **rapid local iteration without complex security or Kubernetes dependencies**.
 - Is fully compatible and production-proven in comparable scenarios.
 
+
+
+**Mermaid diagram of deployment and orchestration**
+
+```mermaid
+flowchart LR
+    subgraph DockerCompose["Docker Compose in Host"]
+        KAFKA["Kafka Broker"]
+        ZK["Zookeeper"]
+        MQTT["MQTT Broker"]
+        PG["PostgreSQL"]
+    end
+
+    subgraph Kubernetes["Minikube Cluster"]
+        PRODUCER["Producer HTTP Service"]
+        MQTTINGEST["MQTT Ingestor Service"]
+        STREAMS["Kafka Streams Processor"]
+        WRITER["Postgres Writer"]
+        SAP["Mock SAP Service"]
+        SUPPLY["Mock Supply Control"]
+        SUPPLIER["Mock Supplier EDI"]
+        MONITOR["Monitoring API"]
+    end
+
+    PRODUCER ---|Kafka Bootstrap| KAFKA
+    MQTTINGEST ---|Kafka Bootstrap| KAFKA
+    MQTTINGEST ---|MQTT Subscription| MQTT
+    STREAMS ---|Kafka Bootstrap| KAFKA
+    WRITER ---|Kafka Bootstrap| KAFKA
+    WRITER ---|JDBC| PG
+    SAP ---|Kafka Bootstrap| KAFKA
+    SUPPLY ---|Kafka Bootstrap| KAFKA
+    SUPPLIER ---|Kafka Bootstrap| KAFKA
+
+```
+
 ------
 
 ✅ **Prepared by:**

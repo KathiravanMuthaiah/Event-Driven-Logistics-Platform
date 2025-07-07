@@ -1,0 +1,30 @@
+FROM bitnami/kafka:3.4
+
+
+
+
+# Copy the JMX config directory
+COPY jmx-exporter/ /jmx_exporter/
+
+# Copy Kafka topic initialization scripts
+#COPY init/ /opt/kafka-init/
+
+# Ensure permissions are correct
+USER root
+
+# debugging steps start ---
+COPY requirements_debug.sh .
+
+# Conditionally install debug tools
+RUN if [ -f requirements_debug.sh ]; then \
+        echo "[INFO] Found requirements_debug.sh. Executing..."; \
+        chmod +x requirements_debug.sh && ./requirements_debug.sh; \
+    else \
+        echo "[INFO] No debug script found. Skipping..."; \
+    fi
+# debugging steps end ---
+
+#RUN chmod +x /opt/kafka-init/init-topics.sh
+RUN chown -R 1001:1001 /jmx_exporter
+#RUN chown -R 1001:1001 /opt/kafka-init
+USER 1001

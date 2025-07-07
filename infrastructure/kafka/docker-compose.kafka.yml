@@ -1,0 +1,51 @@
+
+
+services:
+  zookeeper-logistics:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper-logistics
+ #   restart: unless-stopped
+ #   user: "1001:1001"
+    ports:
+      - "${ZOOKEEPER_CLIENT_PORT}:2181"
+    env_file:
+      - .env
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    volumes:
+      - ./docker-volume/zookeeper/data:/bitnami/zookeeper
+    networks:
+      - bankingnet
+
+  kafka:
+    build: .
+    image: kafka-logistics
+    container_name: kafka-logistics
+#    restart: unless-stopped
+#    user: "1001:1001"
+    depends_on:
+      - zookeeper-logistics
+    ports:
+      - "${KAFKA_LISTENER_PORT}:${KAFKA_LISTENER_PORT}"
+      - "${KAFKA_JMX_PORT}:${KAFKA_JMX_PORT}"  # for JMX_exporter
+    env_file:
+      - .env
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-logistics:2181
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-logistics:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_JMX_PORT=${KAFKA_JMX_PORT}
+      - KAFKA_OPTS=-javaagent:/jmx_exporter/jmx_prometheus_javaagent-0.18.0.jar=${KAFKA_JMX_PORT}:/jmx_exporter/kafka-2_0_0.yml
+    volumes:
+      - ./docker-volume/kafka/data:/bitnami/kafka
+    networks:
+      - bankingnet
+
+networks:
+  bankingnet:
+    external: true
+

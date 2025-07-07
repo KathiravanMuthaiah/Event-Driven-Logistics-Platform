@@ -1,0 +1,27 @@
+# ================================
+# Makefile: Infrastructure Kafka localfolder Setup
+# ================================
+
+# ====================
+# Infra Setup Targets
+# ====================
+
+.PHONY: all create clean
+
+all: create
+	@echo "✅ Infra setup complete."
+	@pwd
+
+create: clean
+	@echo "🔧 Creating folder for kafka and zookeeper"
+	mkdir -p ./docker-volume/zookeeper/data
+	mkdir -p ./docker-volume/kafka/data
+	sudo sh -c 'chown -R 1001:1001 ./docker-volume/kafka'
+	sudo sh -c 'chown -R 1001:1001 ./docker-volume/zookeeper'
+	sudo sh -c 'chmod -R 775 ./docker-volume/zookeeper/'
+	sudo sh -c 'chmod -R 775 ./docker-volume/kafka/'
+
+clean: 
+	@echo "🧹 Cleaning up volumes and network..."
+	sudo sh -c 'rm -rf ./docker-volume/*'
+
