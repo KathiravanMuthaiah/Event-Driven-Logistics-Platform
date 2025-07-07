@@ -2,7 +2,10 @@
 
 services:
   zookeeper-logistics:
-    image: bitnami/zookeeper:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.zookeeper
+    image: zookeeper-logistics
     container_name: zookeeper-logistics
  #   restart: unless-stopped
  #   user: "1001:1001"
@@ -14,11 +17,15 @@ services:
       - ALLOW_ANONYMOUS_LOGIN=yes
     volumes:
       - ./docker-volume/zookeeper/data:/bitnami/zookeeper
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
     networks:
       - bankingnet
 
   kafka:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.kafka
     image: kafka-logistics
     container_name: kafka-logistics
 #    restart: unless-stopped
@@ -42,6 +49,8 @@ services:
       - KAFKA_OPTS=-javaagent:/jmx_exporter/jmx_prometheus_javaagent-0.18.0.jar=${KAFKA_JMX_PORT}:/jmx_exporter/kafka-2_0_0.yml
     volumes:
       - ./docker-volume/kafka/data:/bitnami/kafka
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
     networks:
       - bankingnet
 

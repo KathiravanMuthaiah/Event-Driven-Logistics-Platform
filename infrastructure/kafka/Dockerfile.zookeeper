@@ -1,13 +1,5 @@
-FROM bitnami/kafka:3.4
+FROM bitnami/zookeeper:3.8
 
-
-
-
-# Copy the JMX config directory
-COPY jmx-exporter/ /jmx_exporter/
-
-# Copy Kafka topic initialization scripts
-#COPY init/ /opt/kafka-init/
 
 # Ensure permissions are correct
 USER root
@@ -24,7 +16,6 @@ RUN if [ -f requirements_debug.sh ]; then \
     fi
 # debugging steps end ---
 
-#RUN chmod +x /opt/kafka-init/init-topics.sh
-RUN chown -R 1001:1001 /jmx_exporter
-#RUN chown -R 1001:1001 /opt/kafka-init
+
+RUN chown -R 1001:1001 /bitnami/zookeeper
 USER 1001
