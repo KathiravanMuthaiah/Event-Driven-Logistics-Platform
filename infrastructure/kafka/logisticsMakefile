@@ -14,8 +14,11 @@ PARTITIONS=3
 # List of topics to manage
 TOPICS=call-off-topic sensor-topic unified-topic sap-topic supply-control-topic supplier-edi-topic
 
+
+.PHONY: list-topics create-topics describe-topics delete-topics
+
 # Create all topics
-create-topics:
+create-topics: list-topics
 	@echo "Creating topics..."
 	@for topic in $(TOPICS); do \
 		docker run --rm --network $(NETWORK) $(KAFKA_IMAGE) kafka-topics.sh \
@@ -44,7 +47,7 @@ describe-topics:
 	done
 
 # Delete all topics (careful!)
-delete-topics:
+delete-topics: list-topics
 	@echo "Deleting topics..."
 	@for topic in $(TOPICS); do \
 		docker run --rm --network $(NETWORK) $(KAFKA_IMAGE) kafka-topics.sh \

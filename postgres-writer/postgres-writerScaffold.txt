@@ -1,0 +1,35 @@
+postgres-writer/
+├── Dockerfile                                         # Docker build for JVM mode
+├── Makefile                                           # Build/run targets for this module
+├── .env                                               # Externalized config (JDBC URL, Kafka bootstrap)
+├── README.md                                          # Description, flow, config, endpoints
+└── src
+    ├── main
+    │   ├── java
+    │   │   └── com
+    │   │       └── bauto
+    │   │           └── postgreswriter
+    │   │               ├── config
+    │   │               │   └── KafkaConfig.java
+    │   │               ├── consumer
+    │   │               │   └── EventConsumer.java
+    │   │               ├── mapper
+    │   │               │   └── EventMapper.java
+    │   │               ├── model
+    │   │               │   ├── CallOffEvent.java
+    │   │               │   └── SensorData.java
+    │   │               ├── PostgresWriterApplication.java
+    │   │               └── repository
+    │   │                   └── EventRepository.java
+    │   └── resources
+    │       └── application.properties
+    └── test
+        └── java
+            └── com
+                └── bauto
+                    └── postgreswriter
+                        ├── repository
+                        │   └── EventRepositoryTest.java
+                        └── service
+                            └── EventConsumerTest.java
+
