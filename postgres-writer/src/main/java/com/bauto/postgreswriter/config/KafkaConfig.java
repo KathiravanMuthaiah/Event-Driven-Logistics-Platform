@@ -1,13 +1,13 @@
 package com.bauto.postgreswriter.config;
 
-import io.smallrye.common.annotation.Identifier;
-import jakarta.enterprise.context.ApplicationScoped;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.serialization.StringDeserializer;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
+
+import io.smallrye.common.annotation.Identifier;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class KafkaConfig {

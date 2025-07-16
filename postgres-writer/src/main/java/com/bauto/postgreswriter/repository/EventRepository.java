@@ -17,11 +17,7 @@ public class EventRepository {
     DataSource dataSource;
 
     public void insertSensorData(SensorData data) {
-        String sql = """
-            INSERT INTO logistics.sensor_data (
-                sensor_id, part_number, location, temperature, humidity, timestamp
-            ) VALUES (?, ?, ?, ?, ?, ?)
-        """;
+        String sql = " INSERT INTO logistics.sensor_data (sensor_id, part_number, location, temperature, humidity, timestamp) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -40,12 +36,10 @@ public class EventRepository {
     }
 
     public void insertCallOffEvent(CallOffEvent event) {
-        String sql = """
-            INSERT INTO logistics.call_off_event (
-                call_off_id, supplier_id, part_number, quantity,
-                destination_location, planned_delivery_time, status
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
-        """;
+        String sql = "INSERT INTO logistics.call_off_event ("
+                +"call_off_id, supplier_id, part_number, quantity,"
+                +"destination_location, planned_delivery_time, status"
+                +") VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
