@@ -12,7 +12,7 @@ REPLICATION_FACTOR=1
 PARTITIONS=3
 
 # List of topics to manage
-TOPICS=call-off-topic sensor-topic unified-topic sap-topic supply-control-topic supplier-edi-topic
+TOPICS=call-off-topic sensor-topic unified-topic sap-topic supply-control-topic supplier-edi-topic jit-topic jis-topic jic-topic
 
 
 .PHONY: list-topics create-topics describe-topics delete-topics
@@ -52,6 +52,7 @@ delete-topics: list-topics
 	@for topic in $(TOPICS); do \
 		docker run --rm --network $(NETWORK) $(KAFKA_IMAGE) kafka-topics.sh \
 			--delete \
+			--if-exists \
 			--bootstrap-server $(BOOTSTRAP_SERVER) \
 			--topic $$topic ; \
 	done
