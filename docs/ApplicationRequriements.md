@@ -61,6 +61,7 @@ The platform consists of **seven core components**:
 
 ### 🔹 4️⃣ PostgreSQL Writer
 
+- Capture sensor-topic and call-off-topic data and post into data base for persistence. this is extended listener to capture all data in DB. not the main logic. ( This section is development completed for basic purpose)
 - This service subscribes to `unified-topic`.
 - It persists all events into a PostgreSQL database table (`logistics_events`) for traceability and reporting.
 
@@ -140,6 +141,32 @@ The platform consists of **seven core components**:
 
 ------
 
+
+
+**platform architecture** should demonstrate:
+
+```mermaid
+flowchart TD
+    RESTAPI[Inbound Order Producer] --> KafkaCallOff[(call-off-topic)]
+    MQTTClient[MQTT Ingestor] --> KafkaSensor[(sensor-topic)]
+    KafkaCallOff --> StreamProc[Kafka Streams Processor]
+    KafkaSensor --> StreamProc
+    StreamProc --> KafkaUnified[(unified-topic)]
+
+    KafkaCallOff --> PGWriter[PostgreSQL Writer]
+    KafkaSensor --> PGWriter
+
+    KafkaUnified --> PGWriter[PostgreSQL Writer]
+    KafkaUnified --> SAP[Mock SAP Service]
+    KafkaUnified --> EDI[Mock Supplier EDI]
+    KafkaUnified --> SupplyControl[Mock Supply Control]
+
+    PGWriter --> PostgreSQL[(logistics DB)]
+    PostgreSQL --> MonitoringAPI[Monitoring API]
+```
+
+
+
 ## 🟢 **Non-Functional Requirements**
 
 | Requirement       | Details                                         |
@@ -172,40 +199,28 @@ The platform consists of **seven core components**:
 
 Example Call-Off Event:
 
-```
-jsonCopyEdit{
-  "orderId": "ORDER-1001",
-  "partNumber": "PART-555",
-  "quantity": 10,
-  "timestamp": "2025-07-10T12:00:00Z"
+```json
+{
+  "call_off_id": "CO123456",
+  "supplier_id": "SUP789",
+  "part_number": "PN-001-A",
+  "quantity": 500,
+  "destination_location": "WH-ZONE-3",
+  "planned_delivery_time": "2025-07-16T15:30:00Z",
+  "status": "SCHEDULED"
 }
 ```
 
 Example Sensor Event:
 
-```
-jsonCopyEdit{
-  "sensorId": "SENSOR-77",
-  "temperature": 42.5,
-  "status": "OK",
-  "timestamp": "2025-07-10T12:00:05Z"
-}
+```json
+{"sensorId":"abc124","partNumber":"PN-01","location":"ZONE-A","temperature":72.5,"humidity":55.0,"timestamp":"2025-07-17T13:00:00"}
 ```
 
 Example Unified Event:
 
-```
-jsonCopyEdit{
-  "orderId": "ORDER-1001",
-  "partNumber": "PART-555",
-  "quantity": 10,
-  "sensorData": {
-    "sensorId": "SENSOR-77",
-    "temperature": 42.5,
-    "status": "OK"
-  },
-  "timestamp": "2025-07-10T12:00:05Z"
-}
+```structured text
+yet to design on how to unify the sensor data and call-off event data.
 ```
 
 ------

@@ -55,14 +55,14 @@ Below is what the project will look like end-to-end:
 
 6️⃣ **Monitoring Dashboard**
 
-- Optionally, a simple Quarkus REST API to query PostgreSQL and display received events
+- a simple Quarkus REST API to query PostgreSQL and display received events
 
 ------
 
 ## 📘 **Illustration: Mermaid Diagram**
 
-```
-mermaidCopyEditflowchart TD
+```mermaid
+flowchart TD
     API[HTTP Producer - Quarkus]
     MQTT[MQTT Ingestor - Quarkus]
     KAFKA[Kafka Cluster]
@@ -139,22 +139,21 @@ mermaidCopyEditflowchart TD
 
 ------
 
-## ✅ **Suggested Work Breakdown**
+## ✅ **Planned Work Breakdown** and status
 
-### **Phase 1 – Bootstrapping**
+### **Phase 1 – Bootstrapping** ( infra completed)
 
 - Setup Docker Compose with Kafka, Zookeeper, PostgreSQL
-- Create Quarkus starter projects
 
-### **Phase 2 – Inbound Producer**
-
-- REST endpoint to receive `call-off` JSON
-- Produce to `call-off-topic`
-
-### **Phase 3 – MQTT Ingestor**
+### **Phase 2 – MQTT Ingestor**
 
 - Subscribe to an MQTT topic (`sensors/#`)
 - Produce to `sensor-topic`
+
+### **Phase 3 – Inbound Producer**
+
+- REST endpoint to receive `call-off` JSON
+- Produce to `call-off-topic`
 
 ### **Phase 4 – Streams Processor**
 
@@ -163,6 +162,7 @@ mermaidCopyEditflowchart TD
 
 ### **Phase 5 – PostgreSQL Writer**
 
+- capture sensor-topic and call-off-topic data and post into data base for persistence. this is extended listener to capture all data in DB. not the main logic. ( This section is development completed for basic purpose)
 - Consume `unified-topic`
 - Write to a `logistics_events` table
 

@@ -1,0 +1,14 @@
+mqtt-jis-gateway/
+├── src/
+│   ├── main/
+│   │   ├── java/com/bauto/mqttgateway/
+│   │   │   ├── MqttGatewayApplication.java
+│   │   │   ├── model/JisDemand.java
+│   │   │   ├── mqtt/MqttSubscriber.java
+│   │   │   └── kafka/JisKafkaProducer.java
+│   │   └── resources/
+│   │       └── application.properties
+├── Dockerfile
+├── pom.xml
+└── README.md
+

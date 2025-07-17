@@ -1,0 +1,21 @@
+demand-generator/
+├── src/
+│   ├── main/
+│   │   ├── java/com/bauto/demand/
+│   │   │   ├── DemandGeneratorApplication.java
+│   │   │   ├── model/
+│   │   │   │   ├── JitDemand.java
+│   │   │   │   ├── JicDemand.java
+│   │   │   │   └── JisDemand.java
+│   │   │   ├── scheduler/
+│   │   │   │   └── DemandScheduleService.java
+│   │   │   └── producer/
+│   │   │       ├── JitProducer.java
+│   │   │       ├── JicProducer.java
+│   │   │       └── JisProducer.java
+│   │   └── resources/
+│   │       └── application.properties
+├── Dockerfile
+├── pom.xml
+└── README.md
+
