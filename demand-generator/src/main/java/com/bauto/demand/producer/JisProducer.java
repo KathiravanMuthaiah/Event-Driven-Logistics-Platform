@@ -9,7 +9,6 @@ import org.jboss.logging.Logger;
 
 import com.bauto.demand.model.JisDemand;
 import com.bauto.demand.model.ModelDataSupply;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.enterprise.context.ApplicationScoped;

@@ -3,28 +3,16 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+
+    <parent>
+        <groupId>com.bauto</groupId>
+        <artifactId>EDLP</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
     <groupId>com.bauto</groupId>
     <artifactId>postgres-writer</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-
-    <properties>
-        <quarkus.platform.version>3.2.8.Final</quarkus.platform.version>
-        <quarkus.plugin.version>${quarkus.platform.version}</quarkus.plugin.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>17</java.version>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-bom</artifactId>
-                <version>${quarkus.platform.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <!-- Kafka -->
@@ -80,12 +68,17 @@
         </dependency>
     </dependencies>
 
-    <build>
+   <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <!-- No version/config needed, inherited from parent -->
+            </plugin>
             <plugin>
                 <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
-                <version>${quarkus.plugin.version}</version>
+                <!-- No version/config needed, inherited from parent -->
                 <executions>
                     <execution>
                         <goals>
