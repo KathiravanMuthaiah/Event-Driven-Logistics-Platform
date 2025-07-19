@@ -10,11 +10,18 @@
         <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+
     <groupId>com.bauto</groupId>
-    <artifactId>postgres-writer</artifactId>
+    <artifactId>kafka-unifier-streams</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
     <dependencies>
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-scheduler</artifactId>
+        </dependency>
+
         <!-- Kafka -->
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -26,28 +33,12 @@
             <artifactId>quarkus-smallrye-reactive-messaging-kafka</artifactId>
         </dependency>
 
-        <!-- Quarkus Reactive PostgreSQL Client with Mutiny -->
+        <!-- MQTT-->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-reactive-pg-client</artifactId>
+            <artifactId>quarkus-smallrye-reactive-messaging-mqtt</artifactId>
         </dependency>
 
-        <!-- Required for Mutiny reactive constructs -->
-        <dependency>
-            <groupId>io.smallrye.reactive</groupId>
-            <artifactId>mutiny</artifactId>
-        </dependency>
-
-        <!-- JDBC + PostgreSQL -->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-jdbc-postgresql</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-agroal</artifactId>
-        </dependency>
 
         <!-- Micrometer -->
         <dependency>

@@ -57,8 +57,8 @@
         <module>demand-generator</module>
         <module>mqtt-jis-gateway</module>
         <module>postgres-writer</module>
-        <!--
-        <module>kafka-unifier-streams</module> 
+        <module>kafka-unifier-streams</module>
+        <!-- 
         <module>supplychain-mock</module> 
         <module>warehouse-mock</module> 
         -->

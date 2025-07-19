@@ -18,7 +18,6 @@ public class JisKafkaProducer {
     @Inject
     @Channel("jis-out")
     Emitter<String> emitter;
-
     public void sendToKafka(JisDemand jisDemand) {
         LOG.info("Sending JisDemand to Kafka: " + jisDemand);
         try {

@@ -1,0 +1,17 @@
+kafka-unifier-streams/
+├── src/
+│   ├── main/
+│   │   ├── java/com/bauto/unifier/
+│   │   │   ├── KafkaUnifierApplication.java
+│   │   │   ├── model/
+│   │   │   │   ├── JitDemand.java
+│   │   │   │   ├── JisDemand.java
+│   │   │   │   ├── JicDemand.java
+│   │   │   │   └── CallOffEvent.java
+│   │   │   └── stream/UnifierStreamProcessor.java
+│   │   └── resources/
+│   │       └── application.properties
+├── Dockerfile
+├── pom.xml
+└── README.md
+

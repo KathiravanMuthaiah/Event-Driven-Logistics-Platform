@@ -1,4 +1,4 @@
-package com.bauto.postgreswriter.model;
+package com.bauto.unifier.model;
 
 public class CallOffEvent {
     private String callOffId;

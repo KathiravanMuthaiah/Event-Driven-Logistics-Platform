@@ -22,7 +22,6 @@ public class JisProducer {
     @Inject
     @Channel("jis-demand")
     Emitter<String> emitter;
-
     public void sendMockMqttDemand() {
         try {
             JisDemand jis = new JisDemand();
