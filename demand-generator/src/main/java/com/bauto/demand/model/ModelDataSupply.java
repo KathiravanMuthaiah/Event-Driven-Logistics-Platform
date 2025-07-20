@@ -4,11 +4,11 @@ public class ModelDataSupply {
 
     private static String[] locationCodes = new String[] { "ZONE-A", "ZONE-B", "ZONE-C", "ZONE-X" };
 
-    public static final String GetLocation() {
+    public static  String GetLocation() {
         return locationCodes[(int) Math.abs(Math.random() * 4)];
     }
 
-    public static final String GetLeadTime() {
+    public static  String GetLeadTime() {
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
         int daysToAdd = (int) (Math.random() * 365); // Random days up to a year
         int hoursToAdd = (int) (Math.random() * 24); // Random hours
@@ -22,19 +22,19 @@ public class ModelDataSupply {
         return futureDateTime.format(java.time.format.DateTimeFormatter.ISO_DATE_TIME) + "Z";
     }
 
-    public static final int GetQuantity() {
-        return (int) (Math.random() * 1000);
+    public static  int GetQuantity() {
+        return (int) (Math.random() * 10);
     }
 
-    public static final int GetTad() {
-        return (int) (Math.random() * 100);
+    public static  int GetTad() {
+        return (int) (Math.random() * 10);
     }
 
-    public static final String GetAddNote() {
+    public static  String GetAddNote() {
         return "Random Note: " + Math.random();
     }
 
-    public static final String getPartNumber() {
-        return "PN-00" + (int) Math.random() * 99;
+    public static String getPartNumber() {
+        return "PN-00" + (int) (Math.random() * 5);
     }
 }
