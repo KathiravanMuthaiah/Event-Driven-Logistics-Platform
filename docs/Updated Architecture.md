@@ -298,15 +298,13 @@ flowchart LR
     subgraph STREAMS_AGGREGATORS
         JIT --> JCT[kafka-jct-aggregator]
         JIC --> JCT[kafka-jct-aggregator]
-        JIT --> UNIFIED[unified-topic]
-        JIC --> UNIFIED[unified-topic]
         JCT --> CALLJCT[calloff-jct-topic]
-
         JIS --> JISAGG[kafka-jis-aggregator]
-        JIS --> UNIFIED[unified-topic]
         JISAGG --> CALLJIS[calloff-jis-topic]
     end
-
+	JIT --> UNIFIED[unified-topic]
+    JIC --> UNIFIED[unified-topic]
+    JIS --> UNIFIED[unified-topic]
     UNIFIED --> DBW[Postgres Writer]
     JIT --> DBW  
     JIC --> DBW
