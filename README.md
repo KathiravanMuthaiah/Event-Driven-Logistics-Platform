@@ -1,45 +1,5 @@
 # Architecture reference
 
-### 🧠 **Business Logic Flow:**
-
-| Role                             | Description                                                  |
-| -------------------------------- | ------------------------------------------------------------ |
-| **Demand Generator (1 service)** | One microservice generates all demand types (JIT, JIC, JIS payload → via MQTT) |
-| **MQTT Gateway (JIS)**           | Another microservice listens to MQTT → transforms → pushes to `jis-topic` |
-| **Kafka Streams Processor**      | Consolidates messages from `jit-topic`, `jic-topic`, `jis-topic` → creates call-off |
-| **Call-Off Unifier**             | Produces to `unified-topic` based on aggregation rules (lead_time, part_number, quantity) |
-| **Downstream Consumers**         | `supplychain-mock`, `warehouse-mock` read from `unified-topic` for business action |
-| **DB Writers**                   | Each topic has a writer that persists messages into respective PostgreSQL tables |
-
-
-
-------
-
-## 🔄 Updated Component Breakdown
-
-| Component               | Description                                                  |
-| ----------------------- | ------------------------------------------------------------ |
-| `demand-generator`      | 🧠 Smart scheduler emitting JIT, JIC, and MQTT-formatted JIS messages |
-| `mqtt-jis-gateway`      | 🌐 MQTT Subscriber → Kafka producer for JIS                   |
-| `kafka-unifier-streams` | 🔄 Merges & transforms JIT/JIC/JIS into a normalized **call-off event** |
-| `postgres-writer`       | 🗂️ Subscribes to all raw and unified topics, persists to DB   |
-| `supplychain-mock`      | 🏭 Reacts to `unified-topic` to simulate supply triggers      |
-| `warehouse-mock`        | 🏬 Simulates stock management and movement                    |
-
-
-
-------
-
-## 🎯 Benefits of This Design
-
-| Advantage                       | Description                                                  |
-| ------------------------------- | ------------------------------------------------------------ |
-| ✅ **Unified Demand Simulation** | One generator allows easier config for timing, part types, etc. |
-| ✅ **IoT Realism**               | MQTT simulates physical line/vehicle demands (JIS), kept decoupled |
-| ✅ **Stream-Driven Aggregation** | Kafka Streams takes responsibility for consolidation logic   |
-| ✅ **Traceability**              | Per-topic DB tables allow audit/log review                   |
-| ✅ **Extensible**                | Easy to add anomaly injection, failure testing, delay scenarios |
-
 ## ✅ 1. JIT (Just-In-Time) Message
 
 **📦 Purpose:** Time-critical parts for production, delivered exactly when needed.
@@ -48,21 +8,21 @@
 {
   "part_number": "ABC-123",
   "location_code": "LINE-01",
-  "lead_time": 2,
-  "tad": "2025-07-17T10:00:00Z",
+  "lead_time": "2025-07-17T10:00:00Z",
+  "tad": 2,
   "quantity": 15,
   "add_note": "Critical engine component"
 }
 ```
 
-| Field           | Type    | Description                             |
-| --------------- | ------- | --------------------------------------- |
-| `part_number`   | String  | Identifier of the part                  |
-| `location_code` | String  | Target assembly line or sub-location    |
-| `lead_time`     | Integer | In hours or days (configurable unit)    |
-| `tad`           | String  | Time of Actual Delivery (ISO timestamp) |
-| `quantity`      | Integer | Required quantity                       |
-| `add_note`      | String  | Optional note for logistics team        |
+| Field           | Type    | Description                                 |
+| --------------- | ------- | ------------------------------------------- |
+| `part_number`   | String  | Identifier of the part                      |
+| `location_code` | String  | Target assembly line or sub-location        |
+| `lead_time`     | String  | Time of Actual Delivery (ISO timestamp)     |
+| `tad`           | Integer | minimum quantity to continue the production |
+| `quantity`      | Integer | Required quantity                           |
+| `add_note`      | String  | Optional note for logistics team            |
 
 
 
@@ -79,19 +39,19 @@
 {
   "part_number": "DEF-456",
   "location_code": "WH-A1",
-  "lead_time": 10,
+  "lead_time": "2025-07-17T10:00:00Z",
   "quantity": 100,
   "add_note": "Bulk order for seasonal demand"
 }
 ```
 
-| Field           | Type    | Description                       |
-| --------------- | ------- | --------------------------------- |
-| `part_number`   | String  | Identifier of the part            |
-| `location_code` | String  | Stock or warehouse destination    |
-| `lead_time`     | Integer | Longer lead time in hours or days |
-| `quantity`      | Integer | Bulk quantity                     |
-| `add_note`      | String  | Optional freeform note            |
+| Field           | Type    | Description                             |
+| --------------- | ------- | --------------------------------------- |
+| `part_number`   | String  | Identifier of the part                  |
+| `location_code` | String  | Stock or warehouse destination          |
+| `lead_time`     | String  | Time of Actual Delivery (ISO timestamp) |
+| `quantity`      | Integer | Bulk quantity                           |
+| `add_note`      | String  | Optional freeform note                  |
 
 
 
@@ -108,8 +68,8 @@
 {
   "part_numbers": ["XYZ-789", "XYZ-790", "XYZ-791"],
   "location_code": "LINE-02",
-  "lead_time": 1,
-  "tad": "2025-07-17T08:30:00Z",
+  "lead_time": "2025-07-17T08:30:00Z",
+  "tad": 1,
   "quantity": 1,
   "line_details": {
     "vehicle_id": "VIN-2025-00123",
@@ -119,15 +79,15 @@
 }
 ```
 
-| Field           | Type          | Description                           |
-| --------------- | ------------- | ------------------------------------- |
-| `part_numbers`  | Array[String] | Multiple parts grouped per sequence   |
-| `location_code` | String        | Target production location            |
-| `lead_time`     | Integer       | Time allowed before usage             |
-| `tad`           | String        | Exact timestamp of required arrival   |
-| `quantity`      | Integer       | Typically 1, grouped per car or batch |
-| `line_details`  | Object        | Extra info: vehicle ID, sequence      |
-| `add_note`      | String        | Freeform comment                      |
+| Field           | Type          | Description                                 |
+| --------------- | ------------- | ------------------------------------------- |
+| `part_numbers`  | Array[String] | Multiple parts grouped per sequence         |
+| `location_code` | String        | Target production location                  |
+| `lead_time`     | String        | Time of Actual Delivery (ISO timestamp)     |
+| `tad`           | Integer       | minimum quantity to continue the production |
+| `quantity`      | Integer       | Typically 1, grouped per car or batch       |
+| `line_details`  | Object        | Extra info: vehicle ID, sequence            |
+| `add_note`      | String        | Freeform comment                            |
 
 
 
@@ -142,13 +102,14 @@
 
 ```json
 {
-  "call_off_id": "CALL-0001",
-  "supplier_id": "SUPP-001",
   "part_number": "ABC-123",
-  "quantity": 40,
-  "destination_location": "LINE-01",
-  "planned_delivery_time": "2025-07-17T10:00:00Z",
-  "status": "PENDING"
+  "location_code": "LINE-01",
+  "lead_time": "2025-07-17T10:00:00Z",
+  "tad": 2,
+  "quantity": 15,
+  "add_note": "Critical engine component",
+    "demand_type" : "JIT",
+    "additional_notes": "xwqsdfa"
 }
 ```
 
@@ -176,8 +137,8 @@ CREATE TABLE IF NOT EXISTS logistics.jit_events (
     id SERIAL PRIMARY KEY,
     part_number VARCHAR(100) NOT NULL,
     location_code VARCHAR(100) NOT NULL,
-    lead_time INTEGER NOT NULL,
-    tad TIMESTAMP WITH TIME ZONE NOT NULL,
+    lead_time VARCHAR(50) NOT NULL,
+    tad INTEGER NOT NULL,
     quantity INTEGER NOT NULL,
     add_note TEXT,
     received_at TIMESTAMP WITH TIME ZONE DEFAULT now()
@@ -198,7 +159,7 @@ CREATE TABLE IF NOT EXISTS logistics.jic_events (
     id SERIAL PRIMARY KEY,
     part_number VARCHAR(100) NOT NULL,
     location_code VARCHAR(100) NOT NULL,
-    lead_time INTEGER NOT NULL,
+    lead_time VARCHAR(50) NOT NULL,
     quantity INTEGER NOT NULL,
     add_note TEXT,
     received_at TIMESTAMP WITH TIME ZONE DEFAULT now()
@@ -214,23 +175,21 @@ CREATE INDEX IF NOT EXISTS idx_jic_location ON logistics.jic_events(location_cod
 ## ✅ 3. `jis_events` Table
 
 ```sql
-CREATE TABLE IF NOT EXISTS logistics.jis_events (
+CREATE TABLE IF NOT EXISTS logistics.jit_events (
     id SERIAL PRIMARY KEY,
-    part_numbers TEXT[] NOT NULL,
+    part_number VARCHAR(100) NOT NULL,
     location_code VARCHAR(100) NOT NULL,
-    lead_time INTEGER NOT NULL,
-    tad TIMESTAMP WITH TIME ZONE NOT NULL,
+    lead_time VARCHAR(50) NOT NULL,
+    tad INTEGER NOT NULL,
     quantity INTEGER NOT NULL,
-    vehicle_id VARCHAR(100),
-    sequence_number VARCHAR(100),
     add_note TEXT,
     received_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
 -- Indexes
-CREATE INDEX IF NOT EXISTS idx_jis_tad ON logistics.jis_events(tad);
-CREATE INDEX IF NOT EXISTS idx_jis_location ON logistics.jis_events(location_code);
-CREATE INDEX IF NOT EXISTS idx_jis_vehicle_id ON logistics.jis_events(vehicle_id);
+CREATE INDEX IF NOT EXISTS idx_jit_part_number ON logistics.jit_events(part_number);
+CREATE INDEX IF NOT EXISTS idx_jit_tad ON logistics.jit_events(tad);
+CREATE INDEX IF NOT EXISTS idx_jit_location ON logistics.jit_events(location_code);
 ```
 
 > 💡 `part_numbers` is stored as a `TEXT[]` array to accommodate multiple parts per message.
@@ -243,20 +202,24 @@ CREATE INDEX IF NOT EXISTS idx_jis_vehicle_id ON logistics.jis_events(vehicle_id
 CREATE TABLE IF NOT EXISTS logistics.call_off_event (
     id SERIAL PRIMARY KEY,
     call_off_id VARCHAR(100) NOT NULL,
-    supplier_id VARCHAR(100) NOT NULL,
     part_number VARCHAR(100) NOT NULL,
+    location_code VARCHAR(100) NOT NULL,
+    lead_time VARCHAR(50) NOT NULL,
+    tad INTEGER NOT NULL,
     quantity INTEGER NOT NULL,
-    destination_location VARCHAR(100) NOT NULL,
-    planned_delivery_time TIMESTAMP WITH TIME ZONE NOT NULL,
-    status VARCHAR(50) DEFAULT 'PENDING',
+    demand_type VARCHAR(20) NOT NULL,  -- JIT, JIS, JIC
+    additional_notes TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
+
 -- Indexes
-CREATE UNIQUE INDEX IF NOT EXISTS idx_calloff_id ON logistics.call_off_event(call_off_id);
-CREATE INDEX IF NOT EXISTS idx_calloff_supplier ON logistics.call_off_event(supplier_id);
-CREATE INDEX IF NOT EXISTS idx_calloff_part_number ON logistics.call_off_event(part_number);
-CREATE INDEX IF NOT EXISTS idx_calloff_delivery_time ON logistics.call_off_event(planned_delivery_time);
+-- Unique ID for deduplication
+CREATE UNIQUE INDEX IF NOT EXISTS idx_calloff_calloff_id   ON logistics.call_off_event(call_off_id);
+CREATE INDEX IF NOT EXISTS idx_calloff_part_number   ON logistics.call_off_event(part_number);
+CREATE INDEX IF NOT EXISTS idx_calloff_location_code   ON logistics.call_off_event(location_code);
+CREATE INDEX IF NOT EXISTS idx_calloff_lead_time   ON logistics.call_off_event(lead_time);
+CREATE INDEX IF NOT EXISTS idx_calloff_demand_type   ON logistics.call_off_event(demand_type);
 ```
 
 ------
@@ -279,3 +242,75 @@ CREATE INDEX IF NOT EXISTS idx_calloff_delivery_time ON logistics.call_off_event
 | `jic-topic`     | `JICEvent`     | `logistics.jic_event`      |
 | `jis-topic`     | `JISEvent`     | `logistics.jis_event`      |
 | `unified-topic` | `CallOffEvent` | `logistics.call_off_event` |
+
+## 🧠 Updated Event-Driven Logistics Platform: Kafka Streams Perspective
+
+### 🧩 Component Overview
+
+```mermaid
+flowchart LR
+    DG[Demand Generator] --> JIT[JIT Kafka Topic]
+    DG --> JIC[JIC Kafka Topic]
+    DG --> MQTT[MQTT Broker]
+    MQTT --> GW[MQTT JIS Gateway]
+    GW --> JIS[JIS Kafka Topic]
+
+    subgraph STREAMS_AGGREGATORS
+        JIT --> JCT[kafka-jct-aggregator]
+        JIC --> JCT[kafka-jct-aggregator]
+        JIT --> UNIFIED[unified-topic]
+        JIC --> UNIFIED[unified-topic]
+        JCT --> CALLJCT[calloff-jct-topic]
+
+        JIS --> JISAGG[kafka-jis-aggregator]
+        JIS --> UNIFIED[unified-topic]
+        JISAGG --> CALLJIS[calloff-jis-topic]
+    end
+
+    UNIFIED --> DBW[Postgres Writer]
+    JIT --> DBW  
+    JIC --> DBW
+    JIS --> DBW
+
+    CALLJCT --> SC[supplychain-mock]
+    CALLJIS --> SC
+    CALLJCT --> WH[warehouse-mock]
+    CALLJIS --> WH
+```
+
+------
+
+### 📂 Kafka Streams Projects Separation
+
+| Project                   | Description                                                  |
+| ------------------------- | ------------------------------------------------------------ |
+| **kafka-jct-aggregator**  | 🧠 Aggregates `JIT` + `JIC` by `part_number`, `location_code`, `lead_time`.<br/>Evicts unjoined messages after TTL. Emits to `calloff-jct-topic`. |
+| **kafka-jis-aggregator**  | 📦 Groups `JIS` messages by `part_numbers`, `location_code`, and date of `lead_time`. Time-windowed merge into `calloff-jis-topic`. |
+| **kafka-unifier-streams** | 🔄 Merges `calloff-jct-topic` and `calloff-jis-topic` into `unified-topic`.<br/>This unifies into a consistent `CallOffEvent` model. |
+
+
+
+------
+
+### ✅ Technical Enhancements Introduced
+
+| Topic/Area                | Enhancement                                                  |
+| ------------------------- | ------------------------------------------------------------ |
+| **Partitioning Strategy** | All messages use `part_number` as Kafka key → ensures same partition → supports joins |
+| **CallOff Aggregation**   | `JCT Aggregator`: Aggregates JIC+JIT <br/> `JIS Aggregator`: Time-windowed sequence merge |
+| **Eviction Logic**        | `JCT`: Unjoined JIT events older than 1hr are released as individual call-offs |
+| **Output Topics**         | `calloff-jct-topic`, `calloff-jis-topic` → fed into `unified-topic` |
+| **Postgres Writers**      | Every topic (including calloff) has its own table for audit + traceability |
+
+
+
+------
+
+### ✅ Data Schema Alignment Summary
+
+| Type             | `JIT` / `JIC`            | `JIS`                                  | Call-Off (`JCT`/`JIS`)                                    |
+| ---------------- | ------------------------ | -------------------------------------- | --------------------------------------------------------- |
+| **Key**          | `part_number`            | `part_number[]` (flattened by unifier) | `part_number`                                             |
+| **Lead Time**    | Integer (Days/Hours)     | Integer (usually 1–2)                  | Derived (Minimum or common across group)                  |
+| **Location**     | `location_code`          | `location_code`                        | Unified from common origin                                |
+| **Output Topic** | `jit-topic`, `jic-topic` | `jis-topic`                            | `calloff-jct-topic`, `calloff-jis-topic`, `unified-topic` |
