@@ -58,9 +58,9 @@
         <module>mqtt-jis-gateway</module>
         <module>postgres-writer</module>
         <module>kafka-unifier-streams</module>
+        <module>kafka-jct-aggregator</module>
         <!-- 
-        <module>supplychain-mock</module> 
-        <module>warehouse-mock</module> 
+        <module>supplychain-mock</module>  
         -->
     </modules>
 </project>

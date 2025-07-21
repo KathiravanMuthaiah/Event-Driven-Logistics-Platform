@@ -1,0 +1,20 @@
+kafka-jct-aggregator/
+├── pom.xml
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── bauto/
+│   │   │           └── aggregator/
+│   │   │               ├── KafkaJctAggregatorApp.java
+│   │   │               ├── model/
+│   │   │               │   ├── JitDemand.java
+│   │   │               │   ├── JicDemand.java
+│   │   │               │   └── CallOffEvent.java
+│   │   │               └── streams/
+│   │   │                   └── JctJoinProcessor.java
+│   │   └── resources/
+│   │       ├── application.properties
+│   │       └── logback.xml
+└── README.md
+
